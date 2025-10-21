@@ -29,7 +29,7 @@ db.connect((err) => {
     console.log('Koneksi Berhasil');
 });
 
-app.get('/mahasiswa', (req, res) => {
+app.get('/api/mahasiswa', (req, res) => {
     db.query('SELECT * FROM biodata', (err, results) => {
         if (err) {
             console.error('Error fetching data:', err.stack);
@@ -39,3 +39,27 @@ app.get('/mahasiswa', (req, res) => {
         res.json(results);
     });
 });
+
+app.post('/api/mahasiswa', (req, res) => {
+    const { nama, agama, alamat } = req.body || {};
+    
+    if (!nama || !agama || !alamat) {
+        return res.status(400).json({ message: 'Nama, agama, alamat wajib diisi' });
+    }
+
+    db.query(
+        'INSERT INTO biodata (nama, agama, alamat) VALUES (?, ?, ?)',
+        [nama, agama, alamat],
+        (err, results) => {
+            if (err) {
+                console.error(err);
+                return res.status(500).json({ message: 'Database error' });
+            }
+            res.status(201).json({ message: 'User created successfully' });
+        }
+    );
+});
+
+
+
+    
